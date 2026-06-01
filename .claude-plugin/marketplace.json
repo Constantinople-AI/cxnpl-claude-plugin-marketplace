@@ -1,0 +1,21 @@
+{
+  "name": "constantinople-ai-plugins",
+  "description": "Official Claude Code plugin marketplace for Constantinople AI",
+  "owner": {
+    "name": "Constantinople AI",
+    "email": "jeremys@cxnpl.com"
+  },
+  "plugins": [
+    {
+      "name": "quality-review-plugin",
+      "source": "./plugins/quality-review-plugin",
+      "description": "Adds a quality-review skill for quick code reviews",
+      "version": "1.0.0",
+      "author": {
+        "name": "Constantinople AI"
+      },
+      "category": "productivity",
+      "keywords": ["review", "quality", "security", "performance"]
+    }
+  ]
+}

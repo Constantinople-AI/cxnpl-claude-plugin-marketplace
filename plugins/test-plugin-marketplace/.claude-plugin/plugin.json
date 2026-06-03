@@ -1,0 +1,5 @@
+{
+  "name": "test-plugin-marketplace",
+  "description": "Test plugin with hello-world and last-slack-message skills",
+  "version": "1.0.0"
+}

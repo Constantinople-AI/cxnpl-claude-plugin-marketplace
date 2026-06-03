@@ -1,0 +1,5 @@
+{
+  "name": "test-plugin-root",
+  "description": "Test plugin with current-time and last-fireflies-meeting skills",
+  "version": "1.0.0"
+}

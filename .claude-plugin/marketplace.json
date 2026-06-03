@@ -16,6 +16,17 @@
       },
       "category": "productivity",
       "keywords": ["review", "quality", "security", "performance"]
+    },
+    {
+      "name": "test-plugin-marketplace",
+      "source": "./plugins/test-plugin-marketplace",
+      "description": "Test plugin with hello-world and last-slack-message skills",
+      "version": "1.0.0",
+      "author": {
+        "name": "Constantinople AI"
+      },
+      "category": "testing",
+      "keywords": ["test", "hello-world", "slack"]
     }
   ]
 }

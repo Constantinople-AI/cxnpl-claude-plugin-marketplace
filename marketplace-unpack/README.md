@@ -98,11 +98,12 @@ there's no `PATH`/`node`-location configuration to worry about.
 
 ### The access token
 
-The token is returned by the `getGlpat()` function near the top of `sync.js`.
-Right now it's a placeholder magic string — **edit that function and paste in a
-real GitLab project access token** (scope: `read_repository`). All token
-retrieval lives in that one function, so when the source changes later (env var,
-AWS Secrets Manager, Vault, …) only `getGlpat()` needs to change.
+The token is returned by the `getGlpat()` function near the top of `sync.js`,
+which reads it from the **`GITLAB_PAT_PLUGIN_MARKETPLACE`** environment variable
+(a GitLab project access token with scope `read_repository`). The script errors
+out if the variable isn't set. All token retrieval lives in that one function, so
+when the source changes later (AWS Secrets Manager, Vault, …) only `getGlpat()`
+needs to change.
 
 The script pulls from whatever remote is already configured in `.git/config`; it
 just attaches the token as a one-off HTTP Basic auth header
@@ -144,7 +145,8 @@ is set), skip the pull:
 MARKETPLACE_SYNC_SKIP_PULL=1 node marketplace-unpack/sync.js
 ```
 
-Environment variables `sync.js` understands: `SYNC_LOG_DIR`,
+Environment variables `sync.js` understands:
+`GITLAB_PAT_PLUGIN_MARKETPLACE` (required for the pull), `SYNC_LOG_DIR`,
 `MARKETPLACE_SYNC_SKIP_PULL`.
 
 ### Schedule it every hour — macOS / Linux (cron)
@@ -158,10 +160,16 @@ crontab -e
 Add this (adjust both paths — to `node` and to where you cloned the repo):
 
 ```cron
+# GitLab project access token (cron does not inherit your shell environment)
+GITLAB_PAT_PLUGIN_MARKETPLACE=glpat-xxxxxxxxxxxxxxxxxxxx
+
 # Refresh Claude Cowork plugins from the marketplace, hourly at minute 0
 0 * * * * /usr/local/bin/node /home/ubuntu/cowork-plugins/cxnpl-claude-plugin-marketplace/marketplace-unpack/sync.js >> /home/ubuntu/.cxnpl-marketplace-sync/logs/cron.log 2>&1
 ```
 
+- **cron does not inherit your shell environment**, so set
+  `GITLAB_PAT_PLUGIN_MARKETPLACE` in the crontab (as above) or have the script
+  read it from a secret store.
 - Use an **absolute path to `node`** — cron has a minimal `PATH` and won't find a
   node installed via nvm. Find yours with `command -v node`.
 - The script already logs to `sync.log`; the extra `>> cron.log 2>&1` only
@@ -189,6 +197,13 @@ $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
 
 Register-ScheduledTask -TaskName "CxnplMarketplaceSync" `
   -Action $action -Trigger $trigger -Description "Hourly Claude Cowork plugin sync"
+```
+
+The task needs `GITLAB_PAT_PLUGIN_MARKETPLACE` available. Set it as a persistent
+user/machine environment variable before registering the task, e.g.:
+
+```powershell
+setx GITLAB_PAT_PLUGIN_MARKETPLACE "glpat-xxxxxxxxxxxxxxxxxxxx"
 ```
 
 Logs still go to `%USERPROFILE%\.cxnpl-marketplace-sync\logs\sync.log`. Check the

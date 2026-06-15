@@ -42,15 +42,18 @@ const SKIP_PULL = process.env.MARKETPLACE_SYNC_SKIP_PULL === "1";
 // ---------------------------------------------------------------------------
 // getGlpat — return the GitLab project access token.
 //
-// NOTE: for now this is a hardcoded placeholder. The way the token is retrieved
-// is expected to change (env var, AWS Secrets Manager, Vault, ...). Keep ALL
-// retrieval logic inside this function so callers never change.
-//
-// Future example (env var):
-//   return process.env.MARKETPLACE_GLPAT;
+// Currently read from the GITLAB_PAT_PLUGIN_MARKETPLACE environment variable.
+// The way the token is retrieved may change later (AWS Secrets Manager, Vault,
+// ...) — keep ALL retrieval logic inside this function so callers never change.
 // ---------------------------------------------------------------------------
 function getGlpat() {
-  return "glpat-REPLACE_ME";
+  const token = process.env.GITLAB_PAT_PLUGIN_MARKETPLACE;
+  if (!token) {
+    throw new Error(
+      "GITLAB_PAT_PLUGIN_MARKETPLACE is not set — cannot authenticate the git pull"
+    );
+  }
+  return token;
 }
 
 // This script lives in <marketplace-repo>/marketplace-unpack.

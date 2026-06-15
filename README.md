@@ -15,8 +15,8 @@ plugins/                          # plugins referenced by the manifest
   test-plugin-marketplace/
   test2-plugin2-marketplace1/
 test-plugin-root/                 # a plugin that lives at the repo root
-unpack_marketplace.py             # Cowork helper — flatten plugins (see below)
-unpack_remove.py                  # Cowork helper — undo the flatten (see below)
+unpack_marketplace.js             # Cowork helper — flatten plugins (see below)
+unpack_remove.js                  # Cowork helper — undo the flatten (see below)
 ```
 
 Each plugin is a directory containing its own `.claude-plugin/plugin.json`.
@@ -56,7 +56,7 @@ git clone git@github.com:Constantinople-AI/cxnpl-claude-plugin-marketplace.git
 
 # 2. Unpack — copies every plugin out as a sibling of the repo
 cd cxnpl-claude-plugin-marketplace
-python3 unpack_marketplace.py
+node unpack_marketplace.js
 ```
 
 Result:
@@ -80,7 +80,7 @@ with the latest version. To update after the marketplace changes:
 ```bash
 cd cxnpl-claude-plugin-marketplace
 git pull
-python3 unpack_marketplace.py
+node unpack_marketplace.js
 ```
 
 ### Removing
@@ -90,18 +90,18 @@ untouched):
 
 ```bash
 cd cxnpl-claude-plugin-marketplace
-python3 unpack_remove.py
+node unpack_remove.js
 ```
 
 ### Helper script options
 
-Both scripts are cross-platform (standard-library Python only, no dependencies)
-and support:
+Both scripts are cross-platform (Node.js standard library only, no
+dependencies; requires Node 16.7+) and support:
 
 - `--dry-run` — show what would happen without changing anything
 - `--dest DIR` — target a different directory instead of the repo's parent
 
-`unpack_remove.py` only deletes a directory if it actually looks like a plugin
+`unpack_remove.js` only deletes a directory if it actually looks like a plugin
 (contains `.claude-plugin/plugin.json`), so it won't touch unrelated folders.
 
 ---

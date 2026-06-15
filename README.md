@@ -15,8 +15,7 @@ plugins/                          # plugins referenced by the manifest
   test-plugin-marketplace/
   test2-plugin2-marketplace1/
 test-plugin-root/                 # a plugin that lives at the repo root
-unpack_marketplace.js             # Cowork helper — flatten plugins (see below)
-unpack_remove.js                  # Cowork helper — undo the flatten (see below)
+marketplace-unpack/               # tooling to flatten plugins for Claude Cowork
 ```
 
 Each plugin is a directory containing its own `.claude-plugin/plugin.json`.
@@ -46,63 +45,19 @@ That's it — Claude Code resolves the nested plugins from the manifest for you.
 own directory sitting *flat* in its plugins folder — it won't follow a
 `marketplace.json` or look inside a nested `plugins/` directory.
 
-To use these plugins in Cowork, clone this repo into Cowork's plugins folder and
-then **unpack** the marketplace so every plugin becomes a flat sibling:
+The `marketplace-unpack/` directory contains tooling that flattens these plugins
+into sibling directories Cowork can see, plus an optional scheduled sync to keep
+them up to date.
+
+👉 **See [`marketplace-unpack/README.md`](marketplace-unpack/README.md) for the
+full Cowork setup.** In short:
 
 ```bash
-# 1. Clone this repo INTO your Cowork plugins folder
+# clone INTO your Cowork plugins folder, then unpack
 cd <cowork-plugins-folder>
 git clone git@github.com:Constantinople-AI/cxnpl-claude-plugin-marketplace.git
-
-# 2. Unpack — copies every plugin out as a sibling of the repo
-cd cxnpl-claude-plugin-marketplace
-node unpack_marketplace.js
+node cxnpl-claude-plugin-marketplace/marketplace-unpack/unpack_marketplace.js
 ```
-
-Result:
-
-```
-<cowork-plugins-folder>/
-  cxnpl-claude-plugin-marketplace/   # the cloned repo (left in place)
-  quality-review-plugin/             # ← unpacked, flat, visible to Cowork
-  test-plugin-marketplace/
-  test2-plugin2-marketplace1/
-  test-plugin-root/
-```
-
-Cowork can now see each plugin directly.
-
-### Updating
-
-The unpack script is **idempotent** — every run replaces the flattened plugins
-with the latest version. To update after the marketplace changes:
-
-```bash
-cd cxnpl-claude-plugin-marketplace
-git pull
-node unpack_marketplace.js
-```
-
-### Removing
-
-To remove the flattened plugins from the parent folder (the cloned repo is left
-untouched):
-
-```bash
-cd cxnpl-claude-plugin-marketplace
-node unpack_remove.js
-```
-
-### Helper script options
-
-Both scripts are cross-platform (Node.js standard library only, no
-dependencies; requires Node 16.7+) and support:
-
-- `--dry-run` — show what would happen without changing anything
-- `--dest DIR` — target a different directory instead of the repo's parent
-
-`unpack_remove.js` only deletes a directory if it actually looks like a plugin
-(contains `.claude-plugin/plugin.json`), so it won't touch unrelated folders.
 
 ---
 

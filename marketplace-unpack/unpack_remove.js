@@ -8,7 +8,7 @@
  * itself is never touched.
  *
  *     cd cxnpl-claude-plugin-marketplace
- *     node unpack_remove.js
+ *     node marketplace-unpack/unpack_remove.js
  *
  * A directory is only removed if it looks like a plugin we unpacked, i.e. it
  * contains `.claude-plugin/plugin.json`. This guards against deleting an
@@ -129,7 +129,9 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv.slice(2));
 
-  const marketplaceRoot = __dirname;
+  // This script lives in <marketplace-repo>/marketplace-unpack, so the
+  // marketplace repo root is one level up.
+  const marketplaceRoot = path.dirname(__dirname);
   const destDir = opts.dest
     ? path.resolve(opts.dest)
     : path.dirname(marketplaceRoot);

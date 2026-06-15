@@ -14,7 +14,7 @@
  *     // plugins/
  *     //   cxnpl-claude-plugin-marketplace/   <- you cloned the repo here
  *     cd cxnpl-claude-plugin-marketplace
- *     node unpack_marketplace.js
+ *     node marketplace-unpack/unpack_marketplace.js
  *
  *     // result -- plugins are now flat siblings of the repo:
  *     // plugins/
@@ -152,8 +152,9 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv.slice(2));
 
-  // The marketplace root is the directory this script lives in.
-  const marketplaceRoot = __dirname;
+  // This script lives in <marketplace-repo>/marketplace-unpack, so the
+  // marketplace repo root is one level up.
+  const marketplaceRoot = path.dirname(__dirname);
   const destDir = opts.dest
     ? path.resolve(opts.dest)
     : path.dirname(marketplaceRoot);
